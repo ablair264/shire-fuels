@@ -1,0 +1,34 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans text-base-content;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+  }
+}
+
+@layer components {
+  /* Wave divider for sections */
+  .wave-divider {
+    position: relative;
+  }
+  
+  .wave-divider::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 80px;
+    background: linear-gradient(to bottom right, transparent 49.9%, white 50%);
+  }
+  
+  .wave-divider-accent::after {
+    background: linear-gradient(to bottom right, transparent 49.9%, #264B8C 50%);
+  }
+}
