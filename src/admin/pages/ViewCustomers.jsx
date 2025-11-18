@@ -275,8 +275,10 @@ const ViewCustomers = () => {
           </motion.div>
         ))}
       </div>
+      )}
 
       {/* Search & Filters */}
+      {!loading && !error && (
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -318,8 +320,10 @@ const ViewCustomers = () => {
           </div>
         </Card>
       </motion.div>
+      )}
 
       {/* Customers Table */}
+      {!loading && !error && (
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
