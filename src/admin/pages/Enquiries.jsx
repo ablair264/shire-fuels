@@ -228,8 +228,10 @@ const Enquiries = () => {
           </motion.div>
         ))}
       </div>
+      )}
 
       {/* Enquiries Table */}
+      {!loading && !error && (
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

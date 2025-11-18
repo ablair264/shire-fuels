@@ -299,8 +299,10 @@ const DeliveriesList = () => {
           </motion.div>
         ))}
       </div>
+      )}
 
       {/* Filters */}
+      {!loading && !error && (
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -336,8 +338,10 @@ const DeliveriesList = () => {
           </div>
         </Card>
       </motion.div>
+      )}
 
       {/* Deliveries Table */}
+      {!loading && !error && (
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
