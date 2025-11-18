@@ -1,87 +1,74 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'motion/react'
 import PageHeader from '../shared/PageHeader'
 import Card from '../shared/Card'
 import Table from '../shared/Table'
 import AddEnquiryModal from '../components/AddEnquiryModal'
+import { supabase } from '../../lib/supabase'
 
 const Enquiries = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [enquiries, setEnquiries] = useState([
-    // Mock data - replace with Supabase data
-    {
-      id: 1,
-      name: 'John Smith',
-      email: 'john@example.com',
-      phone: '01594 123456',
-      postcode: 'GL16 8BE',
-      service: 'heating-oil',
-      status: 'new',
-      date: '15/01/2024',
-      notes: 'Need delivery next week'
-    },
-    {
-      id: 2,
-      name: 'Sarah Johnson',
-      email: 'sarah.j@example.com',
-      phone: '01594 789012',
-      postcode: 'GL15 6HN',
-      service: 'red-diesel',
-      status: 'contacted',
-      date: '14/01/2024',
-      notes: 'Farm delivery required'
-    },
-    {
-      id: 3,
-      name: 'Mike Brown',
-      email: 'mike.brown@example.com',
-      phone: '01594 345678',
-      postcode: 'GL16 7JK',
-      service: 'fuel-cards',
-      status: 'converted',
-      date: '13/01/2024',
-      notes: 'Fleet of 5 vehicles'
-    },
-    {
-      id: 4,
-      name: 'Emma Wilson',
-      email: 'emma.w@example.com',
-      phone: '01594 901234',
-      postcode: 'GL14 2AB',
-      service: 'oil-tanks',
-      status: 'new',
-      date: '12/01/2024',
-      notes: 'Tank installation quote needed'
-    },
-    {
-      id: 5,
-      name: 'David Taylor',
-      email: 'david.taylor@example.com',
-      phone: '01594 567890',
-      postcode: 'GL17 0CD',
-      service: 'heating-oil',
-      status: 'contacted',
-      date: '11/01/2024',
-      notes: 'Regular customer - 500L monthly'
-    }
-  ])
-
+  const [enquiries, setEnquiries] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [filterStatus, setFilterStatus] = useState('all')
 
-  const handleAddEnquiry = (newEnquiry) => {
-    setEnquiries([newEnquiry, ...enquiries])
+  // Fetch enquiries from Supabase on component mount
+  useEffect(() => {
+    fetchEnquiries()
+  }, [])
+
+  const fetchEnquiries = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const { data, error } = await supabase
+        .from('enquiries')
+        .select('*')
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+      setEnquiries(data || [])
+    } catch (err) {
+      console.error('Error fetching enquiries:', err)
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const handleStatusChange = (enquiryId, newStatus) => {
-    setEnquiries(enquiries.map(enq =>
-      enq.id === enquiryId ? { ...enq, status: newStatus } : enq
-    ))
+  const handleAddEnquiry = async (newEnquiry) => {
+    try {
+      const { data, error } = await supabase
+        .from('enquiries')
+        .insert([newEnquiry])
+        .select()
 
-    // TODO: Update in Supabase
-    // await supabase
-    //   .from('enquiries')
-    //   .update({ status: newStatus })
-    //   .eq('id', enquiryId)
+      if (error) throw error
+
+      // Refresh enquiries list
+      await fetchEnquiries()
+    } catch (err) {
+      console.error('Error adding enquiry:', err)
+      alert('Failed to add enquiry: ' + err.message)
+    }
+  }
+
+  const handleStatusChange = async (enquiryId, newStatus) => {
+    try {
+      const { error } = await supabase
+        .from('enquiries')
+        .update({ status: newStatus })
+        .eq('id', enquiryId)
+
+      if (error) throw error
+
+      // Refresh enquiries list
+      await fetchEnquiries()
+    } catch (err) {
+      console.error('Error updating enquiry status:', err)
+      alert('Failed to update status: ' + err.message)
+    }
   }
 
   const getServiceLabel = (service) => {
@@ -197,7 +184,24 @@ const Enquiries = () => {
         }
       />
 
+      {/* Loading State */}
+      {loading && (
+        <div className="text-center py-12">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#2a4f8e]"></div>
+          <p className="mt-4 text-gray-600">Loading enquiries...</p>
+        </div>
+      )}
+
+      {/* Error State */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+          <p className="font-semibold">Error loading enquiries</p>
+          <p className="text-sm">{error}</p>
+        </div>
+      )}
+
       {/* Stats Cards */}
+      {!loading && !error && (
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         {[
           { label: 'Total', value: stats.total, color: 'blue', key: 'all' },
@@ -275,6 +279,7 @@ const Enquiries = () => {
           )}
         </Card>
       </motion.div>
+      )}
 
       {/* Add Enquiry Modal */}
       <AddEnquiryModal

@@ -1,92 +1,82 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'motion/react'
 import PageHeader from '../shared/PageHeader'
 import Card from '../shared/Card'
 import Table from '../shared/Table'
 import AddDeliveryModal from '../components/AddDeliveryModal'
+import { supabase } from '../../lib/supabase'
 
 const DeliveriesList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [deliveries, setDeliveries] = useState([
-    // Mock data - replace with Supabase query
-    {
-      id: 1,
-      customer_name: 'John Smith',
-      customer_id: '1',
-      delivery_date: '2024-01-19',
-      delivery_time_slot: '09:00 - 09:30',
-      product: 'heating-oil',
-      quantity_litres: 500,
-      price_per_litre: 0.85,
-      total_price: 425.00,
-      status: 'scheduled',
-      postcode: 'GL16 8BE',
-      address_line1: '123 High Street',
-      city: 'Coleford'
-    },
-    {
-      id: 2,
-      customer_name: 'Green Valley Farm',
-      delivery_date: '2024-01-19',
-      delivery_time_slot: '11:00 - 11:30',
-      product: 'red-diesel',
-      quantity_litres: 1000,
-      price_per_litre: 0.92,
-      total_price: 920.00,
-      status: 'scheduled',
-      postcode: 'GL15 6HN',
-      address_line1: 'Green Valley Road',
-      city: 'Lydney'
-    },
-    {
-      id: 3,
-      customer_name: 'Brown & Co',
-      delivery_date: '2024-01-20',
-      delivery_time_slot: '10:00 - 10:30',
-      product: 'heating-oil',
-      quantity_litres: 750,
-      price_per_litre: 0.85,
-      total_price: 637.50,
-      status: 'in-progress',
-      postcode: 'GL16 7JK',
-      address_line1: '45 Industrial Estate',
-      city: 'Cinderford'
-    },
-    {
-      id: 4,
-      customer_name: 'Emma Wilson',
-      delivery_date: '2024-01-18',
-      delivery_time_slot: '14:00 - 14:30',
-      product: 'heating-oil',
-      quantity_litres: 600,
-      price_per_litre: 0.85,
-      total_price: 510.00,
-      status: 'completed',
-      postcode: 'GL14 2AB',
-      address_line1: '78 Farm Lane',
-      city: 'Newnham'
-    }
-  ])
-
+  const [deliveries, setDeliveries] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [filterStatus, setFilterStatus] = useState('all')
   const [filterDateRange, setFilterDateRange] = useState('all')
 
-  const handleAddDelivery = (newDelivery) => {
-    setDeliveries([newDelivery, ...deliveries])
+  // Fetch deliveries from Supabase on component mount
+  useEffect(() => {
+    fetchDeliveries()
+  }, [])
+
+  const fetchDeliveries = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const { data, error } = await supabase
+        .from('deliveries')
+        .select('*, customers(name)')
+        .order('delivery_date', { ascending: false })
+
+      if (error) throw error
+
+      // Map the data to include customer_name from the joined customers table
+      const formattedData = data?.map(delivery => ({
+        ...delivery,
+        customer_name: delivery.customers?.name || 'Unknown Customer'
+      })) || []
+
+      setDeliveries(formattedData)
+    } catch (err) {
+      console.error('Error fetching deliveries:', err)
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const handleMarkAsCompleted = (deliveryId) => {
-    setDeliveries(deliveries.map(delivery =>
-      delivery.id === deliveryId
-        ? { ...delivery, status: 'completed' }
-        : delivery
-    ))
+  const handleAddDelivery = async (newDelivery) => {
+    try {
+      const { data, error } = await supabase
+        .from('deliveries')
+        .insert([newDelivery])
+        .select()
 
-    // TODO: Update in Supabase
-    // await supabase
-    //   .from('deliveries')
-    //   .update({ status: 'completed', completed_at: new Date().toISOString() })
-    //   .eq('id', deliveryId)
+      if (error) throw error
+
+      // Refresh deliveries list
+      await fetchDeliveries()
+    } catch (err) {
+      console.error('Error adding delivery:', err)
+      alert('Failed to add delivery: ' + err.message)
+    }
+  }
+
+  const handleMarkAsCompleted = async (deliveryId) => {
+    try {
+      const { error } = await supabase
+        .from('deliveries')
+        .update({ status: 'completed', completed_at: new Date().toISOString() })
+        .eq('id', deliveryId)
+
+      if (error) throw error
+
+      // Refresh deliveries list
+      await fetchDeliveries()
+    } catch (err) {
+      console.error('Error marking delivery as completed:', err)
+      alert('Failed to update delivery: ' + err.message)
+    }
   }
 
   const handleGenerateInvoice = (delivery) => {
@@ -265,7 +255,24 @@ const DeliveriesList = () => {
         }
       />
 
+      {/* Loading State */}
+      {loading && (
+        <div className="text-center py-12">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#2a4f8e]"></div>
+          <p className="mt-4 text-gray-600">Loading deliveries...</p>
+        </div>
+      )}
+
+      {/* Error State */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+          <p className="font-semibold">Error loading deliveries</p>
+          <p className="text-sm">{error}</p>
+        </div>
+      )}
+
       {/* Stats Cards */}
+      {!loading && !error && (
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         {[
           { label: 'Total', value: stats.total, key: 'all' },
@@ -367,6 +374,7 @@ const DeliveriesList = () => {
           )}
         </Card>
       </motion.div>
+      )}
 
       {/* Add Delivery Modal */}
       <AddDeliveryModal

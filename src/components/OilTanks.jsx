@@ -1,60 +1,38 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import SplitText from './SplitText'
 import FadeContent from './FadeContent'
+import { supabase } from '../lib/supabase'
 
 const OilTanks = () => {
-  const tanks = [
-    {
-      name: "1235 Litre Slimline Bunded Oil Tank",
-      model: "Deso SL1250BT",
-      volume: "1235ltr",
-      weight: "155.000kg",
-      dimensions: {
-        length: "2000mm",
-        width: "650mm",
-        height: "1660mm"
-      },
-      footprint: "1860mm x 600mm",
-      features: ["Slimline design", "Perfect for tight spaces", "Bunded for safety", "OFTEC approved"]
-    },
-    {
-      name: "1230 Litre Bunded Oil Tank",
-      model: "Deso V1230BT",
-      volume: "1230ltr",
-      weight: "96.000kg",
-      dimensions: {
-        height: "1600mm",
-        diameter: "1250mm"
-      },
-      footprint: "Diameter: 1230mm",
-      features: ["Compact vertical design", "Space-efficient", "Fully bunded", "Weather resistant"]
-    },
-    {
-      name: "1800 Litre Bunded Oil Tank",
-      model: "Deso H1800BT",
-      volume: "1800ltr",
-      weight: "155.000kg",
-      dimensions: {
-        length: "2110mm",
-        width: "1350mm",
-        height: "1599mm"
-      },
-      footprint: "1710mm x 1201mm",
-      features: ["Large capacity", "Ideal for high usage", "Double-walled protection", "Durable construction"]
-    },
-    {
-      name: "2350 Litre Bunded AdBlue Dispensing Tank",
-      model: "Deso",
-      volume: "2300ltr",
-      weight: "180.000kg",
-      dimensions: {
-        height: "1850mm",
-        diameter: "1700mm"
-      },
-      footprint: "Diameter: 1700mm",
-      features: ["AdBlue dispensing system", "Commercial grade", "ISO 22241 compliant", "Built-in pump option"]
+  const [tanks, setTanks] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  // Fetch active tanks from Supabase on component mount
+  useEffect(() => {
+    fetchTanks()
+  }, [])
+
+  const fetchTanks = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const { data, error } = await supabase
+        .from('oil_tank_products')
+        .select('*')
+        .eq('is_active', true)  // Only show active tanks to public
+        .order('display_order', { ascending: true, nullsFirst: false })
+        .order('name')
+
+      if (error) throw error
+      setTanks(data || [])
+    } catch (err) {
+      console.error('Error fetching tanks:', err)
+      setError(err.message)
+    } finally {
+      setLoading(false)
     }
-  ]
+  }
 
   return (
     <div className="min-h-screen">
@@ -126,7 +104,32 @@ const OilTanks = () => {
             </p>
           </div>
 
+          {/* Loading State */}
+          {loading && (
+            <div className="text-center py-12">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-accent"></div>
+              <p className="mt-4 text-gray-600">Loading our tank range...</p>
+            </div>
+          )}
+
+          {/* Error State */}
+          {error && (
+            <div className="max-w-2xl mx-auto bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-lg">
+              <p className="font-semibold">Unable to load tanks</p>
+              <p className="text-sm mt-1">{error}</p>
+              <p className="text-sm mt-2">Please contact us at 01594 738139 for tank information.</p>
+            </div>
+          )}
+
+          {/* Empty State */}
+          {!loading && !error && tanks.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-gray-600 text-lg">No tanks available at the moment. Please contact us for more information.</p>
+            </div>
+          )}
+
           {/* Tanks Grid */}
+          {!loading && !error && tanks.length > 0 && (
           <div className="grid md:grid-cols-2 gap-12 max-w-7xl mx-auto">
             {tanks.map((tank, index) => (
               <FadeContent key={index} direction="up" delay={index * 100}>
@@ -219,6 +222,7 @@ const OilTanks = () => {
               </FadeContent>
             ))}
           </div>
+          )}
         </div>
       </section>
 
