@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'motion/react'
 import PageHeader from '../shared/PageHeader'
 import Card from '../shared/Card'
@@ -7,6 +7,7 @@ import AddCustomerModal from '../components/AddCustomerModal'
 import ViewCustomerModal from '../components/ViewCustomerModal'
 import EditCustomerModal from '../components/EditCustomerModal'
 import AddDeliveryModal from '../components/AddDeliveryModal'
+import { supabase } from '../../lib/supabase'
 
 const ViewCustomers = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
@@ -16,78 +17,49 @@ const ViewCustomers = () => {
   const [selectedCustomer, setSelectedCustomer] = useState(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [filterType, setFilterType] = useState('all')
+  const [customers, setCustomers] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
-  const [customers, setCustomers] = useState([
-    // Mock data - replace with Supabase query
-    {
-      id: '1',
-      name: 'John Smith',
-      email: 'john@example.com',
-      phone: '01594 123456',
-      postcode: 'GL16 8BE',
-      address_line1: '123 High Street',
-      city: 'Coleford',
-      county: 'Gloucestershire',
-      customer_type: 'residential',
-      created_at: '2023-01-15',
-      notes: 'Prefers morning deliveries'
-    },
-    {
-      id: '2',
-      name: 'Green Valley Farm',
-      email: 'info@greenvalley.com',
-      phone: '01594 789012',
-      postcode: 'GL15 6HN',
-      address_line1: 'Green Valley Road',
-      city: 'Lydney',
-      county: 'Gloucestershire',
-      customer_type: 'farm',
-      created_at: '2022-11-20',
-      notes: 'Large farm - requires red diesel monthly'
-    },
-    {
-      id: '3',
-      name: 'Brown & Co',
-      email: 'admin@brownco.com',
-      phone: '01594 345678',
-      postcode: 'GL16 7JK',
-      address_line1: '45 Industrial Estate',
-      city: 'Cinderford',
-      county: 'Gloucestershire',
-      customer_type: 'commercial',
-      created_at: '2023-03-10',
-      notes: 'Business account - invoice on delivery'
-    },
-    {
-      id: '4',
-      name: 'Emma Wilson',
-      email: 'emma.w@example.com',
-      phone: '01594 901234',
-      postcode: 'GL14 2AB',
-      address_line1: '78 Farm Lane',
-      city: 'Newnham',
-      county: 'Gloucestershire',
-      customer_type: 'residential',
-      created_at: '2023-06-05',
-      notes: ''
-    },
-    {
-      id: '5',
-      name: 'David Taylor',
-      email: 'david.taylor@example.com',
-      phone: '01594 567890',
-      postcode: 'GL17 0CD',
-      address_line1: 'Oak Tree Cottage',
-      city: 'Mitcheldean',
-      county: 'Gloucestershire',
-      customer_type: 'residential',
-      created_at: '2022-09-12',
-      notes: 'Regular customer - 500L monthly heating oil'
+  // Fetch customers from Supabase on component mount
+  useEffect(() => {
+    fetchCustomers()
+  }, [])
+
+  const fetchCustomers = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const { data, error } = await supabase
+        .from('customers')
+        .select('*')
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+      setCustomers(data || [])
+    } catch (err) {
+      console.error('Error fetching customers:', err)
+      setError(err.message)
+    } finally {
+      setLoading(false)
     }
-  ])
+  }
 
-  const handleAddCustomer = (newCustomer) => {
-    setCustomers([newCustomer, ...customers])
+  const handleAddCustomer = async (newCustomer) => {
+    try {
+      const { data, error } = await supabase
+        .from('customers')
+        .insert([newCustomer])
+        .select()
+
+      if (error) throw error
+
+      // Refresh the customers list
+      await fetchCustomers()
+    } catch (err) {
+      console.error('Error adding customer:', err)
+      alert('Failed to add customer: ' + err.message)
+    }
   }
 
   const handleViewCustomer = (customer) => {
@@ -95,14 +67,23 @@ const ViewCustomers = () => {
     setIsViewModalOpen(true)
   }
 
-  const handleDeleteCustomer = (customerId) => {
-    setCustomers(customers.filter(c => c.id !== customerId))
+  const handleDeleteCustomer = async (customerId) => {
+    if (window.confirm('Are you sure you want to delete this customer?')) {
+      try {
+        const { error } = await supabase
+          .from('customers')
+          .delete()
+          .eq('id', customerId)
 
-    // TODO: Delete from Supabase
-    // await supabase
-    //   .from('customers')
-    //   .delete()
-    //   .eq('id', customerId)
+        if (error) throw error
+
+        // Refresh the customers list
+        await fetchCustomers()
+      } catch (err) {
+        console.error('Error deleting customer:', err)
+        alert('Failed to delete customer: ' + err.message)
+      }
+    }
   }
 
   const handleEditCustomer = (customer) => {
@@ -110,16 +91,21 @@ const ViewCustomers = () => {
     setIsEditModalOpen(true)
   }
 
-  const handleSaveCustomer = (updatedCustomer) => {
-    setCustomers(customers.map(c =>
-      c.id === updatedCustomer.id ? updatedCustomer : c
-    ))
+  const handleSaveCustomer = async (updatedCustomer) => {
+    try {
+      const { error } = await supabase
+        .from('customers')
+        .update(updatedCustomer)
+        .eq('id', updatedCustomer.id)
 
-    // TODO: Update in Supabase
-    // await supabase
-    //   .from('customers')
-    //   .update(updatedCustomer)
-    //   .eq('id', updatedCustomer.id)
+      if (error) throw error
+
+      // Refresh the customers list
+      await fetchCustomers()
+    } catch (err) {
+      console.error('Error updating customer:', err)
+      alert('Failed to update customer: ' + err.message)
+    }
   }
 
   const handleBookDelivery = (customer) => {
@@ -245,7 +231,24 @@ const ViewCustomers = () => {
         }
       />
 
+      {/* Loading State */}
+      {loading && (
+        <div className="text-center py-12">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#2a4f8e]"></div>
+          <p className="mt-4 text-gray-600">Loading customers...</p>
+        </div>
+      )}
+
+      {/* Error State */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+          <p className="font-semibold">Error loading customers</p>
+          <p className="text-sm">{error}</p>
+        </div>
+      )}
+
       {/* Stats Cards */}
+      {!loading && !error && (
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         {[
           { label: 'Total Customers', value: stats.total, key: 'all' },
@@ -355,6 +358,7 @@ const ViewCustomers = () => {
           )}
         </Card>
       </motion.div>
+      )}
 
       {/* Modals */}
       <AddCustomerModal

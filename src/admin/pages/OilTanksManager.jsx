@@ -1,106 +1,63 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'motion/react'
 import PageHeader from '../shared/PageHeader'
 import Card from '../shared/Card'
 import Table from '../shared/Table'
 import AddTankModal from '../components/AddTankModal'
 import EditTankModal from '../components/EditTankModal'
+import { supabase } from '../../lib/supabase'
 
 const OilTanksManager = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [selectedTank, setSelectedTank] = useState(null)
+  const [tanks, setTanks] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
-  // Mock data - replace with Supabase query
-  const [tanks, setTanks] = useState([
-    {
-      id: '1',
-      name: "1235 Litre Slimline Bunded Oil Tank",
-      model: "Deso SL1250BT",
-      volume: "1235ltr",
-      weight: "155.000kg",
-      dimensions: {
-        length: "2000mm",
-        width: "650mm",
-        height: "1660mm"
-      },
-      footprint: "1860mm x 600mm",
-      features: ["Slimline design", "Perfect for tight spaces", "Bunded for safety", "OFTEC approved"],
-      image_url: null,
-      is_active: true
-    },
-    {
-      id: '2',
-      name: "1230 Litre Bunded Oil Tank",
-      model: "Deso V1230BT",
-      volume: "1230ltr",
-      weight: "96.000kg",
-      dimensions: {
-        height: "1600mm",
-        diameter: "1250mm"
-      },
-      footprint: "Diameter: 1230mm",
-      features: ["Compact vertical design", "Space-efficient", "Fully bunded", "Weather resistant"],
-      image_url: null,
-      is_active: true
-    },
-    {
-      id: '3',
-      name: "1800 Litre Bunded Oil Tank",
-      model: "Deso H1800BT",
-      volume: "1800ltr",
-      weight: "155.000kg",
-      dimensions: {
-        length: "2110mm",
-        width: "1350mm",
-        height: "1599mm"
-      },
-      footprint: "1710mm x 1201mm",
-      features: ["Large capacity", "Ideal for high usage", "Double-walled protection", "Durable construction"],
-      image_url: null,
-      is_active: true
-    },
-    {
-      id: '4',
-      name: "2350 Litre Bunded AdBlue Dispensing Tank",
-      model: "Deso",
-      volume: "2300ltr",
-      weight: "180.000kg",
-      dimensions: {
-        height: "1850mm",
-        diameter: "1700mm"
-      },
-      footprint: "Diameter: 1700mm",
-      features: ["AdBlue dispensing system", "Commercial grade", "ISO 22241 compliant", "Built-in pump option"],
-      image_url: null,
-      is_active: true
+  // Fetch tanks from Supabase on component mount
+  useEffect(() => {
+    fetchTanks()
+  }, [])
+
+  const fetchTanks = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const { data, error } = await supabase
+        .from('oil_tank_products')
+        .select('*')
+        .order('display_order', { ascending: true, nullsFirst: false })
+        .order('name')
+
+      if (error) throw error
+      setTanks(data || [])
+    } catch (err) {
+      console.error('Error fetching tanks:', err)
+      setError(err.message)
+    } finally {
+      setLoading(false)
     }
-  ])
+  }
 
-  // TODO: Fetch from Supabase on component mount
-  // useEffect(() => {
-  //   const fetchTanks = async () => {
-  //     const { data, error } = await supabase
-  //       .from('oil_tank_products')
-  //       .select('*')
-  //       .order('name')
-  //     if (data) setTanks(data)
-  //   }
-  //   fetchTanks()
-  // }, [])
+  const handleAddTank = async (newTank) => {
+    try {
+      const { data, error } = await supabase
+        .from('oil_tank_products')
+        .insert([{
+          ...newTank,
+          is_active: true
+        }])
+        .select()
 
-  const handleAddTank = (newTank) => {
-    const tankWithId = {
-      ...newTank,
-      id: Date.now().toString(),
-      is_active: true
+      if (error) throw error
+
+      // Refresh the tanks list
+      await fetchTanks()
+    } catch (err) {
+      console.error('Error adding tank:', err)
+      alert('Failed to add tank: ' + err.message)
     }
-    setTanks([...tanks, tankWithId])
-
-    // TODO: Insert into Supabase
-    // const { data, error } = await supabase
-    //   .from('oil_tank_products')
-    //   .insert([tankWithId])
   }
 
   const handleEditTank = (tank) => {
@@ -108,39 +65,58 @@ const OilTanksManager = () => {
     setIsEditModalOpen(true)
   }
 
-  const handleSaveTank = (updatedTank) => {
-    setTanks(tanks.map(t => t.id === updatedTank.id ? updatedTank : t))
+  const handleSaveTank = async (updatedTank) => {
+    try {
+      const { error } = await supabase
+        .from('oil_tank_products')
+        .update(updatedTank)
+        .eq('id', updatedTank.id)
 
-    // TODO: Update in Supabase
-    // const { data, error } = await supabase
-    //   .from('oil_tank_products')
-    //   .update(updatedTank)
-    //   .eq('id', updatedTank.id)
-  }
+      if (error) throw error
 
-  const handleDeleteTank = (tankId) => {
-    if (window.confirm('Are you sure you want to delete this tank? It will be removed from the website.')) {
-      setTanks(tanks.filter(t => t.id !== tankId))
-
-      // TODO: Delete from Supabase
-      // const { data, error } = await supabase
-      //   .from('oil_tank_products')
-      //   .delete()
-      //   .eq('id', tankId)
+      // Refresh the tanks list
+      await fetchTanks()
+    } catch (err) {
+      console.error('Error updating tank:', err)
+      alert('Failed to update tank: ' + err.message)
     }
   }
 
-  const handleToggleActive = (tankId) => {
-    setTanks(tanks.map(t =>
-      t.id === tankId ? { ...t, is_active: !t.is_active } : t
-    ))
+  const handleDeleteTank = async (tankId) => {
+    if (window.confirm('Are you sure you want to delete this tank? It will be removed from the website.')) {
+      try {
+        const { error } = await supabase
+          .from('oil_tank_products')
+          .delete()
+          .eq('id', tankId)
 
-    // TODO: Update in Supabase
-    // const tank = tanks.find(t => t.id === tankId)
-    // const { data, error } = await supabase
-    //   .from('oil_tank_products')
-    //   .update({ is_active: !tank.is_active })
-    //   .eq('id', tankId)
+        if (error) throw error
+
+        // Refresh the tanks list
+        await fetchTanks()
+      } catch (err) {
+        console.error('Error deleting tank:', err)
+        alert('Failed to delete tank: ' + err.message)
+      }
+    }
+  }
+
+  const handleToggleActive = async (tankId) => {
+    try {
+      const tank = tanks.find(t => t.id === tankId)
+      const { error } = await supabase
+        .from('oil_tank_products')
+        .update({ is_active: !tank.is_active })
+        .eq('id', tankId)
+
+      if (error) throw error
+
+      // Refresh the tanks list
+      await fetchTanks()
+    } catch (err) {
+      console.error('Error toggling tank status:', err)
+      alert('Failed to update tank status: ' + err.message)
+    }
   }
 
   const columns = [
@@ -239,7 +215,24 @@ const OilTanksManager = () => {
         }
       />
 
+      {/* Loading State */}
+      {loading && (
+        <div className="text-center py-12">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#2a4f8e]"></div>
+          <p className="mt-4 text-gray-600">Loading tanks...</p>
+        </div>
+      )}
+
+      {/* Error State */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+          <p className="font-semibold">Error loading tanks</p>
+          <p className="text-sm">{error}</p>
+        </div>
+      )}
+
       {/* Stats */}
+      {!loading && !error && (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -323,6 +316,7 @@ const OilTanksManager = () => {
           )}
         </Card>
       </motion.div>
+      )}
 
       {/* Modals */}
       <AddTankModal
