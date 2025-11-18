@@ -1,25 +1,39 @@
 import React, { useState } from 'react'
 import { motion } from 'motion/react'
+import { useNavigate } from 'react-router-dom'
+import { supabase } from '../../lib/supabase'
 
 const Login = ({ onLogin }) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+  const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
+    setError(null)
 
-    // TODO: Implement Supabase authentication
-    // const { data, error } = await supabase.auth.signInWithPassword({
-    //   email,
-    //   password,
-    // })
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
 
-    setTimeout(() => {
-      setLoading(false)
+      if (error) throw error
+
+      // Call the optional onLogin callback if provided
       onLogin?.()
-    }, 1000)
+
+      // Navigate to admin dashboard
+      navigate('/admin')
+    } catch (err) {
+      console.error('Login error:', err)
+      setError(err.message || 'Failed to sign in. Please check your credentials.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -105,6 +119,18 @@ const Login = ({ onLogin }) => {
             <p className="text-gray-600 mb-8">
               Enter your credentials to access your dashboard
             </p>
+
+            {/* Error Message */}
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
+                <div className="flex items-start gap-3">
+                  <svg className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <p className="text-sm text-red-700">{error}</p>
+                </div>
+              </div>
+            )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>

@@ -1,4 +1,6 @@
 import React, { useState } from 'react'
+import { supabase } from '../lib/supabase'
+import EnquiryConfirmationModal from './EnquiryConfirmationModal'
 
 const QuoteForm = () => {
   const [formData, setFormData] = useState({
@@ -8,32 +10,48 @@ const QuoteForm = () => {
     postcode: '',
     service: '',
   })
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState(null)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log('Form submitted:', formData)
+    setIsSubmitting(true)
+    setError(null)
 
-    // TODO: Save to Supabase
-    // const { data, error } = await supabase
-    //   .from('enquiries')
-    //   .insert([{
-    //     name: formData.name,
-    //     email: formData.email,
-    //     phone: formData.phone,
-    //     postcode: formData.postcode,
-    //     service: formData.service,
-    //     status: 'new',
-    //     created_at: new Date().toISOString()
-    //   }])
+    try {
+      // Save enquiry to Supabase
+      const { data, error } = await supabase
+        .from('enquiries')
+        .insert([{
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          postcode: formData.postcode,
+          service: formData.service,
+          status: 'new',
+          source: 'website'
+        }])
 
-    alert('Thank you! We\'ll contact you shortly.')
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      postcode: '',
-      service: '',
-    })
+      if (error) throw error
+
+      // Show success modal
+      setIsModalOpen(true)
+
+      // Reset form
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        postcode: '',
+        service: '',
+      })
+    } catch (err) {
+      console.error('Error submitting enquiry:', err)
+      setError('Failed to submit enquiry. Please try again or call us at 01594 738139.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleChange = (e) => {
@@ -44,72 +62,96 @@ const QuoteForm = () => {
   }
 
   return (
-    <section className="bg-accent text-white py-6">
-      <div className="container mx-auto px-4">
-        <form onSubmit={handleSubmit} className="flex flex-col lg:flex-row items-center gap-4">
-          <div className="text-xl font-bold hidden lg:block">GET IN TOUCH</div>
-          
-          <input 
-            type="text"
-            name="name"
-            placeholder="Name"
-            value={formData.name}
-            onChange={handleChange}
-            className="input input-bordered w-full lg:w-auto lg:flex-1 bg-white text-neutral"
-            required
-          />
-          
-          <input 
-            type="email"
-            name="email"
-            placeholder="Email Address"
-            value={formData.email}
-            onChange={handleChange}
-            className="input input-bordered w-full lg:w-auto lg:flex-1 bg-white text-neutral"
-            required
-          />
-          
-          <input
-            type="tel"
-            name="phone"
-            placeholder="Phone Number"
-            value={formData.phone}
-            onChange={handleChange}
-            className="input input-bordered w-full lg:w-auto lg:flex-1 bg-white text-neutral"
-            required
-          />
+    <>
+      <section className="bg-accent text-white py-6">
+        <div className="container mx-auto px-4">
+          {/* Error Message */}
+          {error && (
+            <div className="mb-4 p-3 bg-red-100 border border-red-300 text-red-800 rounded-lg text-sm">
+              {error}
+            </div>
+          )}
 
-          <input
-            type="text"
-            name="postcode"
-            placeholder="Postcode"
-            value={formData.postcode}
-            onChange={handleChange}
-            className="input input-bordered w-full lg:w-auto lg:flex-1 bg-white text-neutral"
-            required
-          />
+          <form onSubmit={handleSubmit} className="flex flex-col lg:flex-row items-center gap-4">
+            <div className="text-xl font-bold hidden lg:block">GET IN TOUCH</div>
 
-          <select 
-            name="service"
-            value={formData.service}
-            onChange={handleChange}
-            className="select select-bordered w-full lg:w-auto lg:flex-1 bg-white text-neutral"
-            required
-          >
-            <option value="" disabled>Please Select</option>
-            <option value="heating-oil">Heating Oil</option>
-            <option value="red-diesel">Red Diesel</option>
-            <option value="fuel-cards">Fuel Cards</option>
-            <option value="oil-tanks">Oil Tanks</option>
-            <option value="other">Other</option>
-          </select>
-          
-          <button type="submit" className="btn btn-primary w-full lg:w-auto px-8 text-white">
-            BOOK FUEL DELIVERY
-          </button>
-        </form>
-      </div>
-    </section>
+            <input
+              type="text"
+              name="name"
+              placeholder="Name"
+              value={formData.name}
+              onChange={handleChange}
+              className="input input-bordered w-full lg:w-auto lg:flex-1 bg-white text-neutral"
+              required
+              disabled={isSubmitting}
+            />
+
+            <input
+              type="email"
+              name="email"
+              placeholder="Email Address"
+              value={formData.email}
+              onChange={handleChange}
+              className="input input-bordered w-full lg:w-auto lg:flex-1 bg-white text-neutral"
+              required
+              disabled={isSubmitting}
+            />
+
+            <input
+              type="tel"
+              name="phone"
+              placeholder="Phone Number"
+              value={formData.phone}
+              onChange={handleChange}
+              className="input input-bordered w-full lg:w-auto lg:flex-1 bg-white text-neutral"
+              required
+              disabled={isSubmitting}
+            />
+
+            <input
+              type="text"
+              name="postcode"
+              placeholder="Postcode"
+              value={formData.postcode}
+              onChange={handleChange}
+              className="input input-bordered w-full lg:w-auto lg:flex-1 bg-white text-neutral"
+              required
+              disabled={isSubmitting}
+            />
+
+            <select
+              name="service"
+              value={formData.service}
+              onChange={handleChange}
+              className="select select-bordered w-full lg:w-auto lg:flex-1 bg-white text-neutral"
+              required
+              disabled={isSubmitting}
+            >
+              <option value="" disabled>Please Select</option>
+              <option value="heating-oil">Heating Oil</option>
+              <option value="red-diesel">Red Diesel</option>
+              <option value="fuel-cards">Fuel Cards</option>
+              <option value="oil-tanks">Oil Tanks</option>
+              <option value="other">Other</option>
+            </select>
+
+            <button
+              type="submit"
+              className="btn btn-primary w-full lg:w-auto px-8 text-white disabled:opacity-50"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'SUBMITTING...' : 'BOOK FUEL DELIVERY'}
+            </button>
+          </form>
+        </div>
+      </section>
+
+      {/* Confirmation Modal */}
+      <EnquiryConfirmationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
+    </>
   )
 }
 
