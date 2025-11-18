@@ -1,4 +1,5 @@
 import React from 'react'
+import SplitText from './SplitText'
 
 const Hero = () => {
   return (
@@ -21,10 +22,10 @@ const Hero = () => {
         <div className="max-w-2xl">
           {/* Element 3: SEO-Optimized Title and Subtitle */}
           <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
-            Delivering Where <br />Others Can't
+            <SplitText text="Delivering Where" className="inline-block" delay={50} /> <br /><SplitText text="Others Can't" className="inline-block" delay={50} />
           </h1>
           <p className="text-xl md:text-2xl text-white/95 mb-4 font-medium">
-            24/7 Emergency Fuel Delivery Across Gloucestershire
+            From households to rural farms and commercial premises we're here to keep you supplied.
           </p>
           <p className="text-lg text-white/90 mb-8 max-w-xl">
             Family-run fuel supplier with 10+ years experience. We specialize in 4x4 deliveries to reach difficult locations others can't access.
@@ -33,7 +34,7 @@ const Hero = () => {
           {/* Element 4: Primary CTA */}
           <div className="flex flex-col sm:flex-row gap-4 mb-8">
             <button className="btn btn-primary btn-lg text-white text-lg px-8">
-              GET A QUOTE
+              BOOK FUEL DELIVERY
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>

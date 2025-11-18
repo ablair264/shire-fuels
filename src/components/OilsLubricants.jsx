@@ -2,7 +2,6 @@ import React from 'react'
 import SplitText from './SplitText'
 import FadeContent from './FadeContent'
 import AnimatedList from './AnimatedList'
-import Plasma from './Plasma'
 
 const OilsLubricants = () => {
   const products = [
@@ -175,15 +174,17 @@ const OilsLubricants = () => {
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative min-h-[500px] flex items-center overflow-hidden">
-        {/* Plasma Background with company colors */}
+        {/* Background with company colors */}
         <div className="absolute inset-0 z-0">
-          <Plasma
-            color="#4D973C"
-            speed={0.6}
-            opacity={0.7}
-            mouseInteractive={true}
+          {/* Background Image - replace src with your image */}
+          <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: `url('https://images.unsplash.com/photo-1593941707874-ef25b8b4a92b?q=80&w=2072&auto=format&fit=crop')`,
+            }}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-secondary/30 to-accent/30"></div>
+          {/* Overlay with company colors */}
+          <div className="absolute inset-0 bg-gradient-to-br from-secondary/80 via-accent/70 to-secondary/60"></div>
         </div>
 
         {/* Wave divider at bottom */}
@@ -224,7 +225,15 @@ const OilsLubricants = () => {
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold text-accent mb-4">OUR PRODUCT RANGE</h2>
+            <h2 className="text-4xl md:text-5xl font-bold text-accent mb-4 flex items-center justify-center gap-3">
+              <SplitText text="OUR PRODUCT RANGE" className="inline-block" delay={40} />
+              <img
+                src="/images/logo/final-logo-blue.svg"
+                alt=""
+                className="h-10 w-auto inline-block"
+                aria-hidden="true"
+              />
+            </h2>
             <p className="text-xl text-gray-700 max-w-3xl mx-auto">
               Comprehensive selection of premium oils and lubricants for every application
             </p>
@@ -267,7 +276,15 @@ const OilsLubricants = () => {
       <section className="py-16 bg-accent text-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">AVAILABLE SIZES</h2>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 flex items-center justify-center gap-3">
+              AVAILABLE SIZES
+              <img
+                src="/images/logo/final-logo-white.svg"
+                alt=""
+                className="h-10 w-auto inline-block"
+                aria-hidden="true"
+              />
+            </h2>
             <p className="text-xl text-white/90 max-w-3xl mx-auto">
               From 1 litre containers to 1,000 litre IBCs - we have the right size for your needs
             </p>
@@ -297,7 +314,15 @@ const OilsLubricants = () => {
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold text-accent mb-4">WHY CHOOSE SHIRE FUELS?</h2>
+            <h2 className="text-4xl md:text-5xl font-bold text-accent mb-4 flex items-center justify-center gap-3">
+              WHY CHOOSE SHIRE FUELS?
+              <img
+                src="/images/logo/final-logo-blue.svg"
+                alt=""
+                className="h-10 w-auto inline-block"
+                aria-hidden="true"
+              />
+            </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -323,7 +348,15 @@ const OilsLubricants = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
             </svg>
 
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">FREE LOCAL DELIVERY</h2>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 flex items-center justify-center gap-3">
+              FREE LOCAL DELIVERY
+              <img
+                src="/images/logo/final-logo-white.svg"
+                alt=""
+                className="h-10 w-auto inline-block"
+                aria-hidden="true"
+              />
+            </h2>
 
             <div className="bg-white/10 backdrop-blur-sm rounded-lg p-8 mb-8">
               <p className="text-2xl font-bold mb-4">

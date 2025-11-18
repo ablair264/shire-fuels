@@ -5,14 +5,35 @@ const QuoteForm = () => {
     name: '',
     email: '',
     phone: '',
+    postcode: '',
     service: '',
   })
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     console.log('Form submitted:', formData)
-    // Handle form submission
+
+    // TODO: Save to Supabase
+    // const { data, error } = await supabase
+    //   .from('enquiries')
+    //   .insert([{
+    //     name: formData.name,
+    //     email: formData.email,
+    //     phone: formData.phone,
+    //     postcode: formData.postcode,
+    //     service: formData.service,
+    //     status: 'new',
+    //     created_at: new Date().toISOString()
+    //   }])
+
     alert('Thank you! We\'ll contact you shortly.')
+    setFormData({
+      name: '',
+      email: '',
+      phone: '',
+      postcode: '',
+      service: '',
+    })
   }
 
   const handleChange = (e) => {
@@ -48,7 +69,7 @@ const QuoteForm = () => {
             required
           />
           
-          <input 
+          <input
             type="tel"
             name="phone"
             placeholder="Phone Number"
@@ -57,7 +78,17 @@ const QuoteForm = () => {
             className="input input-bordered w-full lg:w-auto lg:flex-1 bg-white text-neutral"
             required
           />
-          
+
+          <input
+            type="text"
+            name="postcode"
+            placeholder="Postcode"
+            value={formData.postcode}
+            onChange={handleChange}
+            className="input input-bordered w-full lg:w-auto lg:flex-1 bg-white text-neutral"
+            required
+          />
+
           <select 
             name="service"
             value={formData.service}
@@ -74,7 +105,7 @@ const QuoteForm = () => {
           </select>
           
           <button type="submit" className="btn btn-primary w-full lg:w-auto px-8 text-white">
-            GET A QUOTE
+            BOOK FUEL DELIVERY
           </button>
         </form>
       </div>

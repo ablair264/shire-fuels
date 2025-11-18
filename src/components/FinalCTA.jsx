@@ -1,4 +1,5 @@
 import React from 'react'
+import SplitText from './SplitText'
 
 const FinalCTA = () => {
   return (
@@ -7,7 +8,7 @@ const FinalCTA = () => {
         <div className="max-w-4xl mx-auto text-center">
           {/* Element 10: Final CTA */}
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Ready to Get Started?
+            <SplitText text="Ready to Get Started?" className="inline-block" delay={40} />
           </h2>
           <p className="text-xl md:text-2xl mb-8 text-white/95">
             Experience reliable fuel delivery with Shire Fuels today

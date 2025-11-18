@@ -17,7 +17,7 @@ const Header = () => {
               <li><Link to="/" className="text-accent font-medium">HOME</Link></li>
               <li><Link to="/fuel-cards" className="text-accent font-medium">FUEL CARDS</Link></li>
               <li><Link to="/oils-lubricants" className="text-accent font-medium">OILS & LUBRICANTS</Link></li>
-              <li><a href="/#services" className="text-accent font-medium">SERVICES</a></li>
+              <li><Link to="/oil-tanks" className="text-accent font-medium">OIL TANKS</Link></li>
               <li><a href="/#coverage" className="text-accent font-medium">COVERAGE</a></li>
               <li><a href="/#testimonials" className="text-accent font-medium">REVIEWS</a></li>
               <li><a href="/#faq" className="text-accent font-medium">FAQ</a></li>
@@ -26,19 +26,12 @@ const Header = () => {
           </div>
 
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
-            <div className="relative w-10 h-10">
-              {/* Logo icon - simplified fuel drop design */}
-              <svg viewBox="0 0 40 40" className="w-full h-full">
-                {/* Green leaf/flame on left */}
-                <path d="M15 10 Q10 20 15 30 Q18 25 15 20 Q12 15 15 10 Z" fill="#4D973C" />
-                {/* Light blue droplet on right */}
-                <path d="M25 10 Q30 20 25 30 Q22 25 25 20 Q28 15 25 10 Z" fill="#3082B4" />
-                {/* Dark blue center accent */}
-                <circle cx="20" cy="20" r="4" fill="#264B8C" />
-              </svg>
-            </div>
-            <span className="text-2xl font-bold text-secondary">SHIREFUELS</span>
+          <Link to="/" className="flex items-center">
+            <img
+              src="/images/logo/final-logo.png"
+              alt="Shire Fuels Logo"
+              className="h-16 w-auto"
+            />
           </Link>
         </div>
 
@@ -48,7 +41,7 @@ const Header = () => {
             <li><Link to="/" className="text-accent font-medium hover:text-primary">HOME</Link></li>
             <li><Link to="/fuel-cards" className="text-accent font-medium hover:text-primary text-sm">FUEL CARDS</Link></li>
             <li><Link to="/oils-lubricants" className="text-accent font-medium hover:text-primary text-sm">OILS</Link></li>
-            <li><a href="/#services" className="text-accent font-medium hover:text-primary text-sm">SERVICES</a></li>
+            <li><Link to="/oil-tanks" className="text-accent font-medium hover:text-primary text-sm">TANKS</Link></li>
             <li><a href="/#coverage" className="text-accent font-medium hover:text-primary text-sm">COVERAGE</a></li>
             <li><a href="/#testimonials" className="text-accent font-medium hover:text-primary text-sm">REVIEWS</a></li>
             <li><a href="/#faq" className="text-accent font-medium hover:text-primary">FAQ</a></li>

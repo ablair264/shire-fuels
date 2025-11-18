@@ -1,4 +1,5 @@
 import React from 'react'
+import SplitText from './SplitText'
 
 const Testimonials = () => {
   const testimonials = [
@@ -51,7 +52,15 @@ const Testimonials = () => {
       <div className="container mx-auto px-4">
         {/* Section Title */}
         <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold text-accent mb-4">What Our Customers Say</h2>
+          <h2 className="text-4xl md:text-5xl font-bold text-accent mb-4 flex items-center justify-center gap-3">
+            <SplitText text="What Our Customers Say" className="inline-block" delay={40} />
+            <img
+              src="/images/logo/final-logo-blue.svg"
+              alt=""
+              className="h-10 w-auto inline-block"
+              aria-hidden="true"
+            />
+          </h2>
           <p className="text-lg text-neutral max-w-2xl mx-auto">
             Don't just take our word for it - hear from our satisfied customers across Gloucestershire and the West Midlands
           </p>

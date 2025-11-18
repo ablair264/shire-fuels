@@ -1,4 +1,5 @@
 import React from 'react'
+import SplitText from './SplitText'
 
 const Emergency = () => {
   return (
@@ -31,8 +32,14 @@ const Emergency = () => {
 
           {/* Right Side - Content */}
           <div>
-            <h2 className="text-4xl md:text-5xl font-bold text-accent mb-6">
-              Run out of fuel?...
+            <h2 className="text-4xl md:text-5xl font-bold text-accent mb-6 flex items-center gap-3">
+              <SplitText text="Run out of fuel?..." className="inline-block" delay={40} />
+              <img
+                src="/images/logo/final-logo-blue.svg"
+                alt=""
+                className="h-10 w-auto inline-block"
+                aria-hidden="true"
+              />
             </h2>
             
             <p className="text-lg text-neutral mb-6">

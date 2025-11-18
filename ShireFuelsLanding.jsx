@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, MapPin, Phone, Mail, Clock, Truck, Home, CreditCard, Droplet, Fuel, Star, CheckCircle, ArrowRight } from 'lucide-react';
+import SplitText from '@/components/SplitText';
 
 const ShireFuelsLanding = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -181,7 +182,7 @@ const ShireFuelsLanding = () => {
                           index === currentSlide ? 'translate-y-0' : 'translate-y-full'
                         }`}>
                           <span className="bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-400 bg-clip-text text-transparent">
-                            {slide.title}
+                            <SplitText text={slide.title} className="inline-block" delay={50} />
                           </span>
                         </h1>
                       </div>
@@ -189,7 +190,7 @@ const ShireFuelsLanding = () => {
                         <h2 className={`text-5xl md:text-6xl font-black text-white tracking-tight transition-transform duration-1000 delay-100 ${
                           index === currentSlide ? 'translate-y-0' : 'translate-y-full'
                         }`}>
-                          {slide.subtitle}
+                          <SplitText text={slide.subtitle} className="inline-block" delay={40} />
                         </h2>
                       </div>
                       <div className="overflow-hidden">
@@ -298,7 +299,7 @@ const ShireFuelsLanding = () => {
             isVisible['animate-services'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
           }`}>
             <h2 className="text-5xl md:text-6xl font-black text-white mb-4 tracking-tight">
-              OUR <span className="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">SERVICES</span>
+              <SplitText text="OUR" className="inline-block" delay={40} /> <span className="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent"><SplitText text="SERVICES" className="inline-block" delay={40} /></span>
             </h2>
             <p className="text-xl text-gray-400 max-w-2xl mx-auto">
               Comprehensive fuel solutions for every need
@@ -358,9 +359,9 @@ const ShireFuelsLanding = () => {
                 </div>
               </div>
               <h2 className="text-5xl md:text-6xl font-black text-white mb-6 leading-tight">
-                DELIVERING<br />
+                <SplitText text="DELIVERING" className="inline-block" delay={40} /><br />
                 <span className="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
-                  WHERE OTHERS CAN'T
+                  <SplitText text="WHERE OTHERS CAN'T" className="inline-block" delay={40} />
                 </span>
               </h2>
               <div className="space-y-4 mb-8">
@@ -439,7 +440,7 @@ const ShireFuelsLanding = () => {
                   <Clock className="w-12 h-12 text-white" />
                 </div>
                 <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
-                  RUN OUT OF FUEL?
+                  <SplitText text="RUN OUT OF FUEL?" className="inline-block" delay={40} />
                 </h2>
                 <p className="text-xl text-gray-300 max-w-2xl mb-8 leading-relaxed">
                   Mistakes happen... Whether you've run out of fuel on a bank holiday evening or a Sunday morning, we can deliver your fuel to you any time of the day or night!
@@ -482,7 +483,7 @@ const ShireFuelsLanding = () => {
             isVisible['animate-about'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
           }`}>
             <h2 className="text-5xl md:text-6xl font-black text-white mb-6">
-              ABOUT <span className="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">SHIRE FUELS</span>
+              <SplitText text="ABOUT" className="inline-block" delay={40} /> <span className="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent"><SplitText text="SHIRE FUELS" className="inline-block" delay={40} /></span>
             </h2>
             <p className="text-xl text-gray-300 leading-relaxed mb-8">
               Shire Fuels is a family-run fuel supplier based in the heart of Gloucestershire. Our slogan is that we will deliver where others can't, as an independent distributor customer service is at the core of our business.

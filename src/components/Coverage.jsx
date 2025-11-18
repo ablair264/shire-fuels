@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import SplitText from './SplitText'
 
 const Coverage = () => {
   const [postcode, setPostcode] = useState('')
@@ -39,8 +40,16 @@ const Coverage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left Side - Content */}
           <div className="bg-accent text-white p-8 lg:p-12 rounded-lg shadow-2xl">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              DELIVERING<br />WHERE OTHERS CAN'T
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 flex items-start gap-3">
+              <div>
+                <SplitText text="DELIVERING" className="inline-block" delay={40} /><br /><SplitText text="WHERE OTHERS CAN'T" className="inline-block" delay={40} />
+              </div>
+              <img
+                src="/images/logo/final-logo-white.svg"
+                alt=""
+                className="h-10 w-auto inline-block flex-shrink-0 mt-2"
+                aria-hidden="true"
+              />
             </h2>
             
             <div className="space-y-4 mb-8">

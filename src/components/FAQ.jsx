@@ -1,4 +1,5 @@
 import React from 'react'
+import SplitText from './SplitText'
 
 const FAQ = () => {
   const faqs = [
@@ -49,7 +50,15 @@ const FAQ = () => {
       <div className="container mx-auto px-4">
         {/* Section Title */}
         <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold text-accent mb-4">Frequently Asked Questions</h2>
+          <h2 className="text-4xl md:text-5xl font-bold text-accent mb-4 flex items-center justify-center gap-3">
+            <SplitText text="Frequently Asked Questions" className="inline-block" delay={40} />
+            <img
+              src="/images/logo/final-logo-blue.svg"
+              alt=""
+              className="h-10 w-auto inline-block"
+              aria-hidden="true"
+            />
+          </h2>
           <p className="text-lg text-neutral max-w-2xl mx-auto">
             Find answers to common questions about our fuel delivery service
           </p>
