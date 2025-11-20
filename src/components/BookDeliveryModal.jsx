@@ -36,6 +36,26 @@ const BookDeliveryModal = ({ isOpen, onClose, onSuccess }) => {
 
       if (error) throw error
 
+      // Send email notification via Netlify Function
+      try {
+        await fetch('/.netlify/functions/send-enquiry-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            postcode: formData.postcode,
+            service: formData.service,
+            notes: formData.notes,
+            source: 'website'
+          })
+        })
+      } catch (emailError) {
+        // Don't fail the submission if email fails, just log it
+        console.error('Email notification failed:', emailError)
+      }
+
       // Reset form
       setFormData({
         name: '',
