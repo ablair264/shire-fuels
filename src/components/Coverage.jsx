@@ -3,12 +3,31 @@ import SplitText from './SplitText'
 
 const Coverage = () => {
   const [postcode, setPostcode] = useState('')
+  const [checking, setChecking] = useState(false)
+  const [result, setResult] = useState(null)
 
-  const handlePostcodeCheck = (e) => {
+  // Covered postcode prefixes (case-insensitive)
+  const coveredAreas = [
+    'WR', 'HR', 'GL', 'NP', 'LD', 'SY', 'DY'
+  ]
+
+  const handlePostcodeCheck = async (e) => {
     e.preventDefault()
-    console.log('Checking postcode:', postcode)
-    // Handle postcode lookup
-    alert(`Checking coverage for ${postcode}...`)
+    setChecking(true)
+    setResult(null)
+
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 1000))
+
+    // Check if postcode starts with covered area prefix
+    const postcodePrefix = postcode.trim().toUpperCase().substring(0, 2)
+    const isCovered = coveredAreas.some(area => postcodePrefix.startsWith(area))
+
+    setResult({
+      covered: isCovered,
+      postcode: postcode.trim().toUpperCase()
+    })
+    setChecking(false)
   }
 
   const serviceAreas = [
@@ -82,20 +101,63 @@ const Coverage = () => {
               <p className="mb-4 text-white/90">
                 To check if we cover your area, please use the postcode finder below:
               </p>
-              
-              <form onSubmit={handlePostcodeCheck} className="flex gap-2">
-                <input 
+
+              <form onSubmit={handlePostcodeCheck} className="flex gap-2 mb-4">
+                <input
                   type="text"
                   placeholder="Start Typing Your Postcode"
                   value={postcode}
                   onChange={(e) => setPostcode(e.target.value)}
                   className="input input-bordered flex-1 text-neutral"
                   required
+                  disabled={checking}
                 />
-                <button type="submit" className="btn btn-primary text-white">
-                  CHECK
+                <button
+                  type="submit"
+                  className="btn btn-primary text-white"
+                  disabled={checking}
+                >
+                  {checking ? (
+                    <>
+                      <span className="loading loading-spinner loading-sm"></span>
+                      CHECKING...
+                    </>
+                  ) : (
+                    'CHECK'
+                  )}
                 </button>
               </form>
+
+              {/* Result Display */}
+              {result && (
+                <div className={`p-4 rounded-lg ${result.covered ? 'bg-green-500/20 border-2 border-green-500' : 'bg-orange-500/20 border-2 border-orange-500'}`}>
+                  {result.covered ? (
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <svg className="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span className="font-bold text-lg">Great news!</span>
+                      </div>
+                      <p className="text-white/90">
+                        We deliver to <strong>{result.postcode}</strong>! Get in touch with us to arrange your delivery.
+                      </p>
+                    </div>
+                  ) : (
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <svg className="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        <span className="font-bold text-lg">Not in our usual area</span>
+                      </div>
+                      <p className="text-white/90">
+                        <strong>{result.postcode}</strong> is outside our typical coverage area. However, we may still be able to help! Please call us on <a href="tel:01594738139" className="underline font-bold">01594 738139</a> to discuss your requirements.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             <p className="text-sm text-white/70">
