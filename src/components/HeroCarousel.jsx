@@ -67,60 +67,54 @@ const HeroCarousel = ({ slides, autoPlayInterval = 5000 }) => {
 
   return (
     <div className="absolute inset-0 z-0 overflow-hidden">
-      {/* Current Slide */}
-      <div className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
-        {currentSlide.type === 'image' ? (
-          <img
-            src={currentSlide.src}
-            alt={currentSlide.alt || 'Hero slide'}
-            className="absolute inset-0 w-full h-full min-w-full min-h-full object-cover"
-          />
-        ) : (
-          <video
-            key={currentSlide.src}
-            src={currentSlide.src}
-            className="absolute inset-0 w-full h-full min-w-full min-h-full object-cover"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-          />
-        )}
-      </div>
+      {/* Render all slides but only show current/next for smooth transitions */}
+      {slides.map((slide, index) => {
+        const isCurrent = index === currentIndex
+        const isNext = index === nextIndex
+        const shouldShow = isCurrent || isNext
 
-      {/* Next Slide (for crossfade) */}
-      {nextSlide && (
-        <div className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${isTransitioning ? 'opacity-100' : 'opacity-0'}`}>
-          {nextSlide.type === 'image' ? (
-            <img
-              src={nextSlide.src}
-              alt={nextSlide.alt || 'Hero slide'}
-              className="absolute inset-0 w-full h-full min-w-full min-h-full object-cover"
-            />
-          ) : (
-            <video
-              key={nextSlide.src}
-              src={nextSlide.src}
-              className="absolute inset-0 w-full h-full min-w-full min-h-full object-cover"
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="auto"
-            />
-          )}
-        </div>
-      )}
+        if (!shouldShow) return null
+
+        return (
+          <div
+            key={index}
+            className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
+              isCurrent && !isTransitioning ? 'opacity-100 z-10' :
+              isNext && isTransitioning ? 'opacity-100 z-20' :
+              'opacity-0 z-0'
+            }`}
+          >
+            {slide.type === 'image' ? (
+              <img
+                src={slide.src}
+                alt={slide.alt || 'Hero slide'}
+                className="w-full h-full object-cover"
+                style={{ minWidth: '100%', minHeight: '100%' }}
+              />
+            ) : (
+              <video
+                src={slide.src}
+                className="w-full h-full object-cover"
+                style={{ minWidth: '100%', minHeight: '100%', objectFit: 'cover' }}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="auto"
+              />
+            )}
+          </div>
+        )
+      })}
 
       {/* Enhanced Overlay for better readability */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-black/30 pointer-events-none"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-black/30 pointer-events-none z-30"></div>
 
       {/* Navigation Arrows */}
       <button
         onClick={goToPrevious}
         disabled={isTransitioning}
-        className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-3 rounded-full transition-all duration-200 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="absolute left-4 top-1/2 -translate-y-1/2 z-40 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-3 rounded-full transition-all duration-200 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed"
         aria-label="Previous slide"
       >
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -131,7 +125,7 @@ const HeroCarousel = ({ slides, autoPlayInterval = 5000 }) => {
       <button
         onClick={goToNext}
         disabled={isTransitioning}
-        className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-3 rounded-full transition-all duration-200 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="absolute right-4 top-1/2 -translate-y-1/2 z-40 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-3 rounded-full transition-all duration-200 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed"
         aria-label="Next slide"
       >
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -140,7 +134,7 @@ const HeroCarousel = ({ slides, autoPlayInterval = 5000 }) => {
       </button>
 
       {/* Dots Indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-40 flex gap-2">
         {slides.map((_, index) => (
           <button
             key={index}
@@ -159,7 +153,7 @@ const HeroCarousel = ({ slides, autoPlayInterval = 5000 }) => {
       {/* Play/Pause Button */}
       <button
         onClick={() => setIsPlaying(!isPlaying)}
-        className="absolute bottom-8 right-4 z-20 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-2 rounded-full transition-all duration-200"
+        className="absolute bottom-8 right-4 z-40 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-2 rounded-full transition-all duration-200"
         aria-label={isPlaying ? 'Pause autoplay' : 'Start autoplay'}
       >
         {isPlaying ? (
