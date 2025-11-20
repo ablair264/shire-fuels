@@ -20,7 +20,7 @@ const Hero = () => {
   return (
     <section id="home" className="relative min-h-[600px] flex items-center">
       {/* Hero Background Carousel */}
-      <HeroCarousel slides={carouselSlides} autoPlayInterval={8000} />
+      <HeroCarousel slides={carouselSlides} autoPlayInterval={6000} />
 
       {/* Wave divider at bottom */}
       <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-br from-transparent via-accent/20 to-accent"></div>
