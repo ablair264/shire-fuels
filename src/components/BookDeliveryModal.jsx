@@ -91,8 +91,12 @@ const BookDeliveryModal = ({ isOpen, onClose, onSuccess }) => {
               {/* Header */}
               <div className="flex items-center justify-between p-6 border-b border-gray-200 flex-shrink-0">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900">Book Fuel Delivery</h2>
-                  <p className="text-sm text-gray-600 mt-1">Fill in your details and we'll get back to you shortly</p>
+                  <img
+                    src="/images/logo/final-logo.png"
+                    alt="Shire Fuels"
+                    className="h-12 w-auto mb-2"
+                  />
+                  <p className="text-sm text-gray-600">Fill in your details and we'll get back to you shortly</p>
                 </div>
                 <button
                   onClick={onClose}
