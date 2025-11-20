@@ -1,18 +1,36 @@
 import React from 'react'
 import SplitText from './SplitText'
+import HeroCarousel from './HeroCarousel'
 
 const Hero = () => {
+  // Define carousel slides with images and videos
+  const carouselSlides = [
+    {
+      type: 'image',
+      src: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2232&auto=format&fit=crop',
+      alt: 'Rural countryside aerial view'
+    },
+    {
+      type: 'video',
+      src: '/images/Fuel_Tanker_Video_Generation (1).mp4',
+      alt: 'Fuel tanker delivery video'
+    },
+    {
+      type: 'video',
+      src: '/images/Fuel_Tanker_Video_Generation (2).mp4',
+      alt: 'Fuel tanker in action'
+    },
+    {
+      type: 'image',
+      src: '/images/tanker-full.jpg',
+      alt: 'Fuel tanker truck'
+    }
+  ]
+
   return (
     <section id="home" className="relative min-h-[600px] flex items-center">
-      {/* Hero Background Image */}
-      <div className="absolute inset-0 z-0">
-        <img 
-          src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2232&auto=format&fit=crop"
-          alt="Rural countryside aerial view" 
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/40 to-transparent"></div>
-      </div>
+      {/* Hero Background Carousel */}
+      <HeroCarousel slides={carouselSlides} autoPlayInterval={6000} />
 
       {/* Wave divider at bottom */}
       <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-br from-transparent via-accent/20 to-accent"></div>
