@@ -162,8 +162,8 @@ exports.handler = async (event) => {
 
     // Send email via Resend
     const { data, error } = await resend.emails.send({
-      from: 'Shire Fuels Website <enquiries@shirefuels.co.uk>',
-      to: 'info@shirefuels.co.uk',
+      from: 'Shire Fuels Website <info@shirefuels.co.uk>',
+      to: ['info@shirefuels.co.uk', 'blair@hotmail.co.uk'],
       subject: `New Enquiry: ${enquiry.service ? serviceLabel[enquiry.service] : 'General'} - ${enquiry.name}`,
       html: emailHtml,
       replyTo: enquiry.email
