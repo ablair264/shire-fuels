@@ -12,13 +12,13 @@ const Services = () => {
     {
       title: "Red Diesel",
       description: "For generators, tractors, agricultural and commercial use. Bulk quantities available for farms and businesses.",
-      image: "/images/green-oil.jpg",
+      image: "/images/green-oil.png",
       features: ["Agricultural use", "Commercial grade", "Flexible delivery"]
     },
     {
       title: "Oil Tanks & Equipment",
       description: "Quality oil storage tanks and equipment. Professional installation and maintenance services available.",
-      image: "tanker-back.jpg",
+      image: "tanker-back.png",
       features: ["Range of sizes", "Expert installation", "Maintenance support"]
     }
   ]
