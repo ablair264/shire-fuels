@@ -6,19 +6,19 @@ const Services = () => {
     {
       title: "Domestic Heating Oil",
       description: "Premium kerosene for home heating systems. Reliable delivery to households across Gloucestershire and West Midlands.",
-      image: "https://images.unsplash.com/photo-1598662957477-1e636f3607f8?q=80&w=2340&auto=format&fit=crop",
+      image: "/images/yellow-oil.jpg",
       features: ["24-48 hour delivery", "Competitive pricing", "Small or large quantities"]
     },
     {
       title: "Red Diesel",
       description: "For generators, tractors, agricultural and commercial use. Bulk quantities available for farms and businesses.",
-      image: "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=2340&auto=format&fit=crop",
+      image: "/images/green-oil.jpg",
       features: ["Agricultural use", "Commercial grade", "Flexible delivery"]
     },
     {
       title: "Oil Tanks & Equipment",
       description: "Quality oil storage tanks and equipment. Professional installation and maintenance services available.",
-      image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=2340&auto=format&fit=crop",
+      image: "tanker-back.jpg",
       features: ["Range of sizes", "Expert installation", "Maintenance support"]
     }
   ]
