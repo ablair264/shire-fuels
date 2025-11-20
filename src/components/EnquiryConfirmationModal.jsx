@@ -1,5 +1,4 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
 
 const EnquiryConfirmationModal = ({ isOpen, onClose }) => {
   if (!isOpen) return null
@@ -37,22 +36,8 @@ const EnquiryConfirmationModal = ({ isOpen, onClose }) => {
 
           {/* Message */}
           <p className="text-gray-600 text-center mb-6">
-            We've received your enquiry and will get back to you shortly. One of our team members will contact you soon.
+            We've received your enquiry and will get back to you shortly. One of our team members will contact you soon to discuss your requirements.
           </p>
-
-          {/* Account Setup CTA */}
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
-            <p className="text-sm text-gray-700 text-center mb-3">
-              Want to track your deliveries and manage your account online?
-            </p>
-            <Link
-              to="/admin/login"
-              className="block w-full py-2.5 px-4 bg-gradient-to-r from-[#2a4f8e] to-[#264B8C] text-white rounded-lg font-semibold text-center hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
-              onClick={onClose}
-            >
-              Setup Your Account
-            </Link>
-          </div>
 
           {/* Close Button */}
           <button

@@ -1,7 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import FadeContent from './FadeContent'
+import FuelCardEnquiryModal from './FuelCardEnquiryModal'
+import EnquiryConfirmationModal from './EnquiryConfirmationModal'
 
 const FuelCards = () => {
+  const [isEnquiryModalOpen, setIsEnquiryModalOpen] = useState(false)
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false)
   const stats = [
     { value: "3,300+", label: "Fuel Stations", sublabel: "Nationwide Coverage" },
     { value: "100%", label: "HMRC Compliant", sublabel: "VAT Reclaim Ready" },
@@ -475,7 +479,10 @@ const FuelCards = () => {
                   </p>
 
                   <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                    <button className="cta-button group px-8 py-4 bg-white text-accent rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center gap-3">
+                    <button
+                      onClick={() => setIsEnquiryModalOpen(true)}
+                      className="cta-button group px-8 py-4 bg-white text-accent rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center gap-3"
+                    >
                       <span className="relative z-10">Enquire Now</span>
                       <svg className="relative z-10 w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
@@ -520,6 +527,19 @@ const FuelCards = () => {
           </div>
         </section>
       </div>
+
+      {/* Enquiry Modal */}
+      <FuelCardEnquiryModal
+        isOpen={isEnquiryModalOpen}
+        onClose={() => setIsEnquiryModalOpen(false)}
+        onSuccess={() => setIsConfirmationModalOpen(true)}
+      />
+
+      {/* Confirmation Modal */}
+      <EnquiryConfirmationModal
+        isOpen={isConfirmationModalOpen}
+        onClose={() => setIsConfirmationModalOpen(false)}
+      />
     </div>
   )
 }

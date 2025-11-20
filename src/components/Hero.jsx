@@ -1,8 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 import SplitText from './SplitText'
 import HeroCarousel from './HeroCarousel'
+import BookDeliveryModal from './BookDeliveryModal'
+import EnquiryConfirmationModal from './EnquiryConfirmationModal'
 
 const Hero = () => {
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false)
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false)
   // Define carousel slides with images and videos
   const carouselSlides = [
     {
@@ -51,7 +55,10 @@ const Hero = () => {
 
           {/* Element 4: Primary CTA */}
           <div className="flex flex-col sm:flex-row gap-4 mb-8">
-            <button className="btn btn-primary btn-lg text-white text-lg px-8">
+            <button
+              onClick={() => setIsBookingModalOpen(true)}
+              className="btn btn-primary btn-lg text-white text-lg px-8"
+            >
               BOOK FUEL DELIVERY
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -94,6 +101,19 @@ const Hero = () => {
           </div>
         </div>
       </div>
+
+      {/* Booking Modal */}
+      <BookDeliveryModal
+        isOpen={isBookingModalOpen}
+        onClose={() => setIsBookingModalOpen(false)}
+        onSuccess={() => setIsConfirmationModalOpen(true)}
+      />
+
+      {/* Confirmation Modal */}
+      <EnquiryConfirmationModal
+        isOpen={isConfirmationModalOpen}
+        onClose={() => setIsConfirmationModalOpen(false)}
+      />
     </section>
   )
 }

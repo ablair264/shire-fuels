@@ -2,11 +2,15 @@ import React, { useState, useEffect } from 'react'
 import SplitText from './SplitText'
 import FadeContent from './FadeContent'
 import { supabase } from '../lib/supabase'
+import BookDeliveryModal from './BookDeliveryModal'
+import EnquiryConfirmationModal from './EnquiryConfirmationModal'
 
 const OilTanks = () => {
   const [tanks, setTanks] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false)
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false)
 
   // Fetch active tanks from Supabase on component mount
   useEffect(() => {
@@ -68,7 +72,10 @@ const OilTanks = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <button className="btn btn-primary btn-lg text-white text-lg px-8">
+              <button
+                onClick={() => setIsBookingModalOpen(true)}
+                className="btn btn-primary btn-lg text-white text-lg px-8"
+              >
                 REQUEST A QUOTE
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -207,7 +214,10 @@ const OilTanks = () => {
 
                     {/* CTA Buttons */}
                     <div className="flex flex-col sm:flex-row gap-3">
-                      <button className="btn btn-primary flex-1 text-white">
+                      <button
+                        onClick={() => setIsBookingModalOpen(true)}
+                        className="btn btn-primary flex-1 text-white"
+                      >
                         Get Quote
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -302,7 +312,10 @@ const OilTanks = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="btn btn-lg bg-white text-accent hover:bg-white/90 border-none text-lg px-8">
+              <button
+                onClick={() => setIsBookingModalOpen(true)}
+                className="btn btn-lg bg-white text-accent hover:bg-white/90 border-none text-lg px-8"
+              >
                 REQUEST A QUOTE
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -342,6 +355,19 @@ const OilTanks = () => {
           </div>
         </div>
       </section>
+
+      {/* Booking Modal */}
+      <BookDeliveryModal
+        isOpen={isBookingModalOpen}
+        onClose={() => setIsBookingModalOpen(false)}
+        onSuccess={() => setIsConfirmationModalOpen(true)}
+      />
+
+      {/* Confirmation Modal */}
+      <EnquiryConfirmationModal
+        isOpen={isConfirmationModalOpen}
+        onClose={() => setIsConfirmationModalOpen(false)}
+      />
     </div>
   )
 }
