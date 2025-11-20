@@ -3,73 +3,124 @@ import React, { useState, useEffect, useCallback } from 'react'
 const HeroCarousel = ({ slides, autoPlayInterval = 5000 }) => {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isPlaying, setIsPlaying] = useState(true)
-  const [fadeIn, setFadeIn] = useState(true)
+  const [isTransitioning, setIsTransitioning] = useState(false)
+  const [nextIndex, setNextIndex] = useState(null)
 
   const goToNext = useCallback(() => {
-    setFadeIn(false)
+    setNextIndex((currentIndex + 1) % slides.length)
+    setIsTransitioning(true)
     setTimeout(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length)
-      setFadeIn(true)
-    }, 300)
-  }, [slides.length])
+      setIsTransitioning(false)
+      setNextIndex(null)
+    }, 800)
+  }, [slides.length, currentIndex])
 
   const goToPrevious = () => {
-    setFadeIn(false)
+    const prevIdx = (currentIndex - 1 + slides.length) % slides.length
+    setNextIndex(prevIdx)
+    setIsTransitioning(true)
     setTimeout(() => {
-      setCurrentIndex((prevIndex) => (prevIndex - 1 + slides.length) % slides.length)
-      setFadeIn(true)
-    }, 300)
+      setCurrentIndex(prevIdx)
+      setIsTransitioning(false)
+      setNextIndex(null)
+    }, 800)
   }
 
   const goToSlide = (index) => {
-    setFadeIn(false)
+    if (index === currentIndex) return
+    setNextIndex(index)
+    setIsTransitioning(true)
     setTimeout(() => {
       setCurrentIndex(index)
-      setFadeIn(true)
-    }, 300)
+      setIsTransitioning(false)
+      setNextIndex(null)
+    }, 800)
   }
 
   // Auto-play functionality
   useEffect(() => {
-    if (!isPlaying) return
+    if (!isPlaying || isTransitioning) return
 
     const interval = setInterval(() => {
       goToNext()
     }, autoPlayInterval)
 
     return () => clearInterval(interval)
-  }, [isPlaying, autoPlayInterval, goToNext])
+  }, [isPlaying, autoPlayInterval, goToNext, isTransitioning])
+
+  // Preload next video for faster transitions
+  useEffect(() => {
+    const nextSlideIndex = (currentIndex + 1) % slides.length
+    const nextSlideData = slides[nextSlideIndex]
+
+    if (nextSlideData.type === 'video') {
+      const video = document.createElement('video')
+      video.src = nextSlideData.src
+      video.preload = 'auto'
+      video.load()
+    }
+  }, [currentIndex, slides])
 
   const currentSlide = slides[currentIndex]
+  const nextSlide = nextIndex !== null ? slides[nextIndex] : null
 
   return (
-    <div className="absolute inset-0 z-0">
-      {/* Media Container */}
-      <div className={`relative w-full h-full transition-opacity duration-300 ${fadeIn ? 'opacity-100' : 'opacity-50'}`}>
+    <div className="absolute inset-0 z-0 overflow-hidden">
+      {/* Current Slide */}
+      <div className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
         {currentSlide.type === 'image' ? (
           <img
             src={currentSlide.src}
             alt={currentSlide.alt || 'Hero slide'}
-            className="w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full min-w-full min-h-full object-cover"
           />
         ) : (
           <video
             key={currentSlide.src}
             src={currentSlide.src}
-            className="w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full min-w-full min-h-full object-cover"
             autoPlay
             muted
             loop
             playsInline
+            preload="auto"
           />
         )}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/40 to-transparent"></div>
       </div>
+
+      {/* Next Slide (for crossfade) */}
+      {nextSlide && (
+        <div className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${isTransitioning ? 'opacity-100' : 'opacity-0'}`}>
+          {nextSlide.type === 'image' ? (
+            <img
+              src={nextSlide.src}
+              alt={nextSlide.alt || 'Hero slide'}
+              className="absolute inset-0 w-full h-full min-w-full min-h-full object-cover"
+            />
+          ) : (
+            <video
+              key={nextSlide.src}
+              src={nextSlide.src}
+              className="absolute inset-0 w-full h-full min-w-full min-h-full object-cover"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+            />
+          )}
+        </div>
+      )}
+
+      {/* Enhanced Overlay for better readability */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-black/30 pointer-events-none"></div>
 
       {/* Navigation Arrows */}
       <button
         onClick={goToPrevious}
-        className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-3 rounded-full transition-all duration-200 hover:scale-110"
+        disabled={isTransitioning}
+        className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-3 rounded-full transition-all duration-200 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed"
         aria-label="Previous slide"
       >
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -79,7 +130,8 @@ const HeroCarousel = ({ slides, autoPlayInterval = 5000 }) => {
 
       <button
         onClick={goToNext}
-        className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-3 rounded-full transition-all duration-200 hover:scale-110"
+        disabled={isTransitioning}
+        className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-3 rounded-full transition-all duration-200 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed"
         aria-label="Next slide"
       >
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -93,7 +145,8 @@ const HeroCarousel = ({ slides, autoPlayInterval = 5000 }) => {
           <button
             key={index}
             onClick={() => goToSlide(index)}
-            className={`transition-all duration-200 rounded-full ${
+            disabled={isTransitioning}
+            className={`transition-all duration-200 rounded-full disabled:cursor-not-allowed ${
               index === currentIndex
                 ? 'w-8 h-3 bg-white'
                 : 'w-3 h-3 bg-white/50 hover:bg-white/75'
