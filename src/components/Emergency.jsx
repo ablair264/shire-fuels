@@ -1,7 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import SplitText from './SplitText'
+import BookDeliveryModal from './BookDeliveryModal'
+import EnquiryConfirmationModal from './EnquiryConfirmationModal'
 
 const Emergency = () => {
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false)
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false)
   return (
     <section className="py-16 bg-base-100">
       <div className="container mx-auto px-4">
@@ -84,7 +88,10 @@ const Emergency = () => {
               </div>
             </div>
 
-            <button className="btn btn-primary btn-lg text-white px-8">
+            <button
+              onClick={() => setIsBookingModalOpen(true)}
+              className="btn btn-primary btn-lg text-white px-8"
+            >
               READ MORE
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -93,6 +100,19 @@ const Emergency = () => {
           </div>
         </div>
       </div>
+
+      {/* Booking Modal */}
+      <BookDeliveryModal
+        isOpen={isBookingModalOpen}
+        onClose={() => setIsBookingModalOpen(false)}
+        onSuccess={() => setIsConfirmationModalOpen(true)}
+      />
+
+      {/* Confirmation Modal */}
+      <EnquiryConfirmationModal
+        isOpen={isConfirmationModalOpen}
+        onClose={() => setIsConfirmationModalOpen(false)}
+      />
     </section>
   )
 }
