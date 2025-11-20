@@ -44,7 +44,7 @@ const OilTanks = () => {
           <div
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
             style={{
-              backgroundImage: `url('https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?q=80&w=2074&auto=format&fit=crop')`,
+              backgroundImage: `url('/images/tanker-7.jpg')`,
             }}
           />
           {/* Overlay with company colors */}
