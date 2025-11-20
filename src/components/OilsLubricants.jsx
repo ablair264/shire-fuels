@@ -189,7 +189,7 @@ const OilsLubricants = () => {
           <div
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
             style={{
-              backgroundImage: `url('/images/tanker-back.jpg')`,
+              backgroundImage: `url('/images/tanker-3.jpg')`,
             }}
           />
           {/* Overlay with company colors */}
