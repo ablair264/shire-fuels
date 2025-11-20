@@ -6,11 +6,6 @@ const Hero = () => {
   // Define carousel slides with images and videos
   const carouselSlides = [
     {
-      type: 'video',
-      src: '/images/Fuel_Tanker_Video_Generation (1).mp4',
-      alt: 'Fuel tanker delivery video'
-    },
-    {
       type: 'image',
       src: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2232&auto=format&fit=crop',
       alt: 'Rural countryside aerial view'
